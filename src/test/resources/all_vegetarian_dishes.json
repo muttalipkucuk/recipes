@@ -1,0 +1,10 @@
+{
+  "filters": [
+    {
+      "key": "vegetarian",
+      "operator": "EQUAL",
+      "field_type": "BOOLEAN",
+      "value": "true"
+    }
+  ]
+}

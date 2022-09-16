@@ -1,0 +1,16 @@
+{
+  "filters": [
+    {
+      "key": "ingredients",
+      "operator": "NOT_LIKE",
+      "field_type": "STRING",
+      "value": "salmon"
+    },
+    {
+      "key": "instructions",
+      "operator": "LIKE",
+      "field_type": "STRING",
+      "value": "oven"
+    }
+  ]
+}

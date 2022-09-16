@@ -1,7 +1,9 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.3'
-	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.7.3'
+    id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+    id 'java'
+    id "io.freefair.lombok" version "6.5.1"
+    id 'jacoco'
 }
 
 group = 'com.kucuktech.lab'
@@ -9,14 +11,71 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+}
+
+ext {
+    h2databaseVersion = "2.1.214"
+    javaxPersistenceVersion = "2.2"
+    mockitoVersion = "4.8.0"
+    springBootVersion = "2.7.3"
+    springDocVersion = "1.6.11"
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
+    implementation "javax.persistence:javax.persistence-api:$javaxPersistenceVersion"
+    implementation "org.springdoc:springdoc-openapi-ui:$springDocVersion"
+
+    runtimeOnly "com.h2database:h2:$h2databaseVersion"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
+
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.9
+            }
+        }
+        rule {
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 1.0
+            }
+        }
+        rule {
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.7
+            }
+        }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+        html.destination file("${buildDir}/reports/jacoco")
+    }
+}
+
+test.finalizedBy jacocoTestCoverageVerification
+test.finalizedBy jacocoTestReport
